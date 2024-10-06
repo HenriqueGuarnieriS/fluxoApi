@@ -1,25 +1,36 @@
 const express = require("express");
-const bodyParser = require("body-parser");
 const axios = require("axios");
+const querystring = require("querystring");
 require("dotenv").config();
 
 const app = express();
-app.use(bodyParser.json());
+app.use(express.json());
 
 // Rota principal para autorizações de callback do Instagram
 app.get("/auth/callback", async (req, res) => {
   const { code } = req.query;
 
+  if (!code) {
+    return res
+      .status(400)
+      .json({ error: "Código de autorização não fornecido" });
+  }
+
   try {
     // Trocar o código de autorização por um token de acesso
     const response = await axios.post(
       "https://api.instagram.com/oauth/access_token",
-      {
+      querystring.stringify({
         client_id: process.env.INSTAGRAM_CLIENT_ID,
         client_secret: process.env.INSTAGRAM_CLIENT_SECRET,
         grant_type: "authorization_code",
         redirect_uri: process.env.INSTAGRAM_REDIRECT_URI,
         code,
+      }),
+      {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
       }
     );
 
