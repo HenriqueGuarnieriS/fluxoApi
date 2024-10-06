@@ -1,10 +1,7 @@
-import express from "express";
-import bodyParser from "body-parser";
-import axios from "axios";
-import dotenv from "dotenv";
-
-// Configurar as variáveis de ambiente
-dotenv.config();
+const express = require("express");
+const bodyParser = require("body-parser");
+const axios = require("axios");
+require("dotenv").config();
 
 const app = express();
 app.use(bodyParser.json());
