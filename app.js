@@ -8,7 +8,11 @@ const app = express();
 app.use(express.json());
 // Configurar CORS para permitir a origem específica
 const corsOptions = {
-  origin: ["http://localhost:5173", "http://192.168.22.201:5173"],
+  origin: [
+    "http://localhost:5173",
+    "http://192.168.22.201:5173",
+    "https://candimap.up.railway.app",
+  ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
 };
