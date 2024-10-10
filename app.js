@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
   res.send("API do Instagram está funcionando");
 });
 // Rota para verificar o status
-app.get("/socialblade/:username", async (req, res) => {
+app.get("/tracking/:username", async (req, res) => {
   const { username } = req.params;
   const SocialBlade = require("socialblade");
 
