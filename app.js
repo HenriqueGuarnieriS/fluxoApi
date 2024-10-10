@@ -25,6 +25,8 @@ app.use(cors(corsOptions));
 // Middleware para verificar o token JWT em produção
 if (process.env.NODE_ENV === "production") {
   app.use((req, res, next) => {
+    if (req.path === "/generate-token") return next(); // Permite o acesso a essa rota sem autenticação
+
     const token = req.cookies.authToken; // O token é extraído do cookie
 
     if (!token) return res.status(401).send("Access Denied");
