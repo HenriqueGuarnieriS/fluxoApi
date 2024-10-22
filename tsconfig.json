@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "module": "CommonJS", // Mude para CommonJS
+    "target": "ES2020",
+    "strict": true,
+    "moduleResolution": "node",
+    "esModuleInterop": true, // Permitir a interoperabilidade com CommonJS
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "./dist",
+    "rootDir": "./"
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
+}
