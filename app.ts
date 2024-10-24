@@ -1,11 +1,12 @@
-const express = require("express");
-const cors = require("cors");
-const jwt = require("jsonwebtoken");
-const cookieParser = require("cookie-parser");
-const mongoose = require("mongoose");
-const dotenv = require("dotenv");
-const SocialBlade = require("socialblade");
-import { NextFunction, Request, Response } from "express"; // Mantendo os types
+import express from "express";
+import cors from "cors";
+import jwt from "jsonwebtoken";
+import cookieParser from "cookie-parser";
+import mongoose from "mongoose";
+import dotenv from "dotenv";
+import SocialBlade from "socialblade";
+import { NextFunction, Request, Response } from "express";
+import profileRoutes from "./rountes/instagram";
 
 dotenv.config();
 
@@ -101,7 +102,7 @@ app.get("/tracking/:username", async (req: Request, res: Response) => {
   const response = await client.instagram.user(username);
   res.send(response);
 });
-
+app.use("/api", profileRoutes);
 // Iniciar o servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
