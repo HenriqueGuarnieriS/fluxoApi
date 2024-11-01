@@ -7,6 +7,8 @@ import dotenv from "dotenv";
 import SocialBlade from "socialblade";
 import { NextFunction, Request, Response } from "express";
 import profileRoutes from "./rountes/instagram";
+import partidoRoutes from "./rountes/partidos";
+import vereadoresRoutes from "./rountes/vereadores";
 
 dotenv.config();
 
@@ -103,6 +105,8 @@ app.get("/tracking/:username", async (req: Request, res: Response) => {
   res.send(response);
 });
 app.use("/api", profileRoutes);
+app.use("/api", partidoRoutes);
+app.use("/api", vereadoresRoutes);
 // Iniciar o servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

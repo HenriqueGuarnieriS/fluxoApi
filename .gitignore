@@ -28,3 +28,7 @@ coverage/
 # Temp files
 *.tmp
 *.temp
+
+.dist
+
+dist
