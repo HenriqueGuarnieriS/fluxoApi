@@ -13,7 +13,6 @@ router.get(
     try {
       // Faz a requisição para o endpoint externo para cada username
       const response = await cacheAllAggregations();
-      console.log(response);
 
       // Retorna os dados tipados como InstagramData[]
       return res.send(response);
@@ -38,7 +37,6 @@ router.get(
     try {
       // Faz a requisição para o endpoint externo para cada username
       const response = await getAggregationData();
-      console.log(response);
 
       // Retorna os dados tipados como InstagramData[]
       return res.send(response);

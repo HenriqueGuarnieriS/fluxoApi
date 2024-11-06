@@ -1,75 +1,15 @@
 import express from "express";
-import { getInstagrams, saveProfile } from "../database/mongo";
+import {
+  getInstagram,
+  getInstagrams,
+  saveProfile,
+  updateInstagrams,
+} from "../database/mongo";
 import { Request, Response } from "express";
 import { SocialBladeService } from "../services/socialblade";
+import { InstagramUser } from "socialblade";
 
 const router = express.Router(); // Cria o roteador express
-
-export const instagramAccounts = [
-  {
-    city: "São Paulo",
-    state: "São Paulo",
-    name: "Guto Zacarias",
-    instagram: "gutozacariasmbl",
-    socialBlade: {},
-  },
-  {
-    city: "São Paulo",
-    state: "São Paulo",
-    name: "Arthur do Val",
-    instagram: "arthurmoledoval",
-    socialBlade: {},
-  },
-  {
-    city: "Curitiba",
-    state: "Paraná",
-    name: "João Bettega",
-    instagram: "bettega_",
-    socialBlade: {},
-  },
-  {
-    city: "Rio de Janeiro",
-    state: "Rio de Janeiro",
-    name: "Gabriel Costenaro",
-    instagram: "costenarorj",
-    socialBlade: {},
-  },
-  {
-    city: "São Paulo",
-    state: "São Paulo",
-    name: "Renato Battista",
-    instagram: "renatobattistambl",
-    socialBlade: {},
-  },
-  {
-    city: "Salto",
-    state: "São Paulo",
-    name: "Kim Kataguiri",
-    instagram: "kimkataguiri",
-    socialBlade: {},
-  },
-  {
-    city: "Natal",
-    state: "Rio Grande do Norte",
-    name: "Matheus Faustino",
-    instagram: "faustinorn",
-    socialBlade: {},
-  },
-  {
-    city: "São Paulo",
-    state: "São Paulo",
-    name: "Amanda Vettorazzo",
-    instagram: "amanda.vettorazzo",
-    socialBlade: {},
-  },
-  {
-    city: "São Paulo",
-    state: "São Paulo",
-    name: "renansantosmbl",
-    instagram: "renansantosmbl",
-    socialBlade: {},
-  },
-];
 const socialBladeService = new SocialBladeService();
 // Rota que recebe uma lista de usernames e salva os perfis
 router.post(
@@ -83,39 +23,27 @@ router.post(
       });
     }
 
+    // Loop para cada username na lista
     try {
-      const profiles = [];
-
-      // Loop para cada username na lista
-      for (const username of instagramAccounts) {
-        try {
-          // Faz a requisição para o endpoint externo para cada username
-          const response = await socialBladeService.getInstagram(
-            username.instagram
-          );
-
-          // Verifica se o dado retornado é válido
-          if (response) {
-            // Chama o serviço para salvar a informação recebida no MongoDB
-            const savedProfile = await saveProfile(response);
-            profiles.push(savedProfile);
+      const users: InstagramUser[] = [];
+      await Promise.all(
+        usernames.map(async (user) => {
+          if (!(await getInstagram(user))) {
+            const userData = await socialBladeService.getInstagram(user);
+            users.push(userData);
           }
-        } catch (error) {
-          // Verifica se o erro é uma instância de Error
-          if (error instanceof Error) {
-            console.error(
-              `Erro ao buscar o perfil de ${username.instagram}:`,
-              error.message
-            );
-          } else {
-            console.error(
-              `Erro desconhecido ao buscar o perfil de ${username.instagram}`
-            );
-          }
+        })
+      );
+      // Faz a requisição para o endpoint externo para cada username
+
+      // Verifica se o dado retornado é válido
+      if (users) {
+        for (const user of users) {
+          await saveProfile(user);
         }
       }
 
-      res.status(200).json({ message: "Perfis salvos com sucesso!", profiles });
+      res.status(200).json({ message: "Perfis salvos com sucesso!" });
     } catch (error) {
       // Verifica se o erro é uma instância de Error
       if (error instanceof Error) {
@@ -170,7 +98,6 @@ router.get("/instagrams", async (req: Request, res: Response): Promise<any> => {
   try {
     // Faz a requisição para o endpoint externo para cada username
     const response = await getInstagrams();
-    console.log(response);
 
     // Retorna os dados tipados como InstagramData[]
     return res.send(response);
@@ -188,5 +115,29 @@ router.get("/instagrams", async (req: Request, res: Response): Promise<any> => {
     }
   }
 });
+router.get(
+  "/instagrams/update",
+  async (req: Request, res: Response): Promise<any> => {
+    try {
+      // Faz a requisição para o endpoint externo para cada username
+      await updateInstagrams();
+
+      // Retorna os dados tipados como InstagramData[]
+      return res.send({ message: "Dados atualizados com sucesso" });
+    } catch (error) {
+      // Verifica se o erro é uma instância de Error
+      if (error instanceof Error) {
+        return res.status(500).json({
+          error: "Erro ao processar o perfil",
+          details: error.message,
+        });
+      } else {
+        return res
+          .status(500)
+          .json({ error: "Erro desconhecido ao processar o perfil" });
+      }
+    }
+  }
+);
 
 export default router; // Exporta o roteador

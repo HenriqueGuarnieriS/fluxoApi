@@ -9,7 +9,6 @@ export class SocialBladeService {
       process.env.SOCIALBLADE_ACCESS_TOKEN as string
     );
     const data = await client.instagram.user(username);
-    console.log(data);
     return data;
   };
 }

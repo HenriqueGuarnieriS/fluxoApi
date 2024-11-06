@@ -19,23 +19,49 @@ export const saveProfile = async (profileData: InstagramUser) => {
   }
 };
 
-// export const getInstagrams = async (): Promise<InstagramInterface[]> => {
-//   try {
-//     const instagrams = await InstagramDoc.find(
-//       {},
-//       { "id.username": 1, _id: 0 }
-//     ).lean();
-//     return instagrams as InstagramInterface[];
-//   } catch {
-//     throw new Error("Falha ao buscar");
-//   }
-// };
 export const getInstagrams = async (): Promise<InstagramInterface[]> => {
   try {
     const instagrams = await InstagramDoc.find({}, { _id: 0, __v: 0 }).lean();
     return instagrams as InstagramInterface[];
   } catch {
     throw new Error("Falha ao buscar");
+  }
+};
+export const getInstagram = async (
+  username: string
+): Promise<InstagramInterface> => {
+  try {
+    const instagram = await InstagramDoc.findOne(
+      { "id.username": username },
+      { _id: 0, __v: 0 }
+    );
+    return instagram as InstagramInterface;
+  } catch {
+    throw new Error("Falha ao buscar");
+  }
+};
+
+export const updateInstagrams = async (): Promise<void> => {
+  try {
+    const instagrams = await InstagramDoc.find({}, { "id.username": 1 });
+    const socialBladeService = new SocialBladeService();
+
+    const socialbladedata = await Promise.all(
+      instagrams.map(async (insta) =>
+        socialBladeService.getInstagram(insta.id?.username)
+      )
+    );
+
+    // Atualiza cada documento ou cria caso não exista
+    for (const data of socialbladedata) {
+      await InstagramDoc.updateOne(
+        { "id.username": data.id.username }, // Filtro pelo username do Instagram
+        { $set: data }, // Atualiza com os dados novos
+        { upsert: true } // Se não existir, cria o documento
+      );
+    }
+  } catch (error) {
+    console.error("Erro ao atualizar/insert os dados do Instagram:", error);
   }
 };
 

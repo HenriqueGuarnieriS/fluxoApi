@@ -9,10 +9,17 @@ import { NextFunction, Request, Response } from "express";
 import profileRoutes from "./rountes/instagram";
 import partidoRoutes from "./rountes/partidos";
 import vereadoresRoutes from "./rountes/vereadores";
-
+import cron from "node-cron";
+import { updateInstagrams } from "./database/mongo";
 dotenv.config();
 
 const app = express();
+
+cron.schedule("0 8 * * *", async () => {
+  console.log("Cron job diário iniciado");
+  await updateInstagrams();
+});
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -21,7 +28,7 @@ const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
       ? process.env.FRONTEND_URL
-      : ["http://localhost:5173"],
+      : ["http://localhost:5173", "http://192.168.22.201:5173"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -84,17 +91,17 @@ app.get("/generate-token", (req: Request, res: Response) => {
     }
   );
 
+  // Configura o cookie no lado do servidor
   res.cookie("authToken", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
+    maxAge: 15 * 60 * 1000, // 15 minutos em milissegundos
   });
   res.json({ message: "Token gerado" });
 });
-
 // Rota para pegar dados do SocialBlade
 app.get("/tracking/:username", async (req: Request, res: Response) => {
   const { username } = req.params;
-  console.log(`Request to @${username}`);
 
   const client = new SocialBlade(
     process.env.SOCIALBLADE_CLIENT_ID as string,

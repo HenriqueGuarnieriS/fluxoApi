@@ -7,7 +7,6 @@ router.get("/partidos", async (req: Request, res: Response): Promise<any> => {
   try {
     // Faz a requisição para o endpoint externo para cada username
     const response = await getPartidos();
-    console.log(response);
 
     // Retorna os dados tipados como InstagramData[]
     return res.send(response);
