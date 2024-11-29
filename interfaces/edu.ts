@@ -1,20 +1,20 @@
-interface DocumentId {
+export interface DocumentId {
   $oid: string;
 }
 
-interface EduDependenciaCount {
+export interface EduDependenciaCount {
   Federal?: number;
   Estadual?: number;
   Municipal?: number;
   Privada?: number;
 }
 
-interface EduCategoria {
+export interface EduCategoria {
   nao?: EduDependenciaCount;
   sim?: EduDependenciaCount;
 }
 
-interface EduEstadoDocument {
+export interface EduEstadoDocument {
   _id: DocumentId;
   id: string;
   agua_potavel: EduCategoria;

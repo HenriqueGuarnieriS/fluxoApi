@@ -1,6 +1,5 @@
-import { PartidoInterface } from "../interfaces/partido";
+import { EduEstadoDocument } from "../interfaces/edu";
 import EduEscolasDoc from "../schemas/EduSchema";
-import PartidoDoc from "../schemas/PartidoSchema";
 
 export const getEscolasPorEstado = async (): Promise<EduEstadoDocument[]> => {
   try {
