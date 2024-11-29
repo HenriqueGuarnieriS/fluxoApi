@@ -9,6 +9,7 @@ import { NextFunction, Request, Response } from "express";
 import profileRoutes from "./rountes/instagram";
 import partidoRoutes from "./rountes/partidos";
 import vereadoresRoutes from "./rountes/vereadores";
+import eduRoutes from "./rountes/edu";
 import cron from "node-cron";
 import { updateInstagrams } from "./database/mongo";
 dotenv.config();
@@ -114,6 +115,7 @@ app.get("/tracking/:username", async (req: Request, res: Response) => {
 app.use("/api", profileRoutes);
 app.use("/api", partidoRoutes);
 app.use("/api", vereadoresRoutes);
+app.use("/api", eduRoutes);
 // Iniciar o servidor
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
