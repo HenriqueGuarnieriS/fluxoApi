@@ -10,16 +10,9 @@ import profileRoutes from "./rountes/instagram";
 import partidoRoutes from "./rountes/partidos";
 import vereadoresRoutes from "./rountes/vereadores";
 import eduRoutes from "./rountes/edu";
-import cron from "node-cron";
-import { updateInstagrams } from "./database/mongo";
 dotenv.config();
 
 const app = express();
-
-cron.schedule("0 8 * * *", async () => {
-  console.log("Cron job diário iniciado");
-  await updateInstagrams();
-});
 
 app.use(express.json());
 app.use(cookieParser());
@@ -29,7 +22,11 @@ const corsOptions = {
   origin:
     process.env.NODE_ENV === "production"
       ? process.env.FRONTEND_URL
-      : ["http://localhost:5173", "http://192.168.22.201:5173"],
+      : [
+          "http://localhost:5173",
+          "http://192.168.22.201:5173",
+          "http://192.168.22.201:5174",
+        ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
